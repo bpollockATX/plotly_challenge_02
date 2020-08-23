@@ -1,6 +1,8 @@
 
-//          
-//  initialize graph
+//////////////////////////////////////////////////////////////////////
+// BEGINNING OF INIT() GRAPH
+/////////////////////////////////////////////////////////////////////
+
     function init(){
         d3.json("samples.json").then(function(data){
 
@@ -9,7 +11,7 @@
         var otu_ids = data.samples.map(row => row.otu_ids);
         var otu_labels = data.samples.map(row => row.otu_labels);
     
-
+        
         // Call update ID list function
         updateIDList(user_id)
         
@@ -18,30 +20,28 @@
         var top10_otu_IDs = otu_ids[0].sort((a,b) => b-a);
         var top10_otu_labels = otu_labels[0].sort((a,b) => b-a);
 
+       sliced_top10_otu_labels = top10_otu_labels.slice(0,10).toString().split(",")
+
+
 
     //Create the trace
         var otuString = "OTU ";
         var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
             return otuString.concat(item.toString());
         });
-        console.log(topStringOTUIDS)
         var trace1 = {
             type: "bar",
             orientation: "h",
             name: "placeholder",
-            // x: topStringOTUIDS,      //top10_otu_IDs.slice(0,10),
-            // y: top10_vals.slice(0,10),
+
             x: top10_vals.slice(0,10),
             y: topStringOTUIDS,
-            text: topStringOTUIDS
-            // transforms:[{
-            //     type: "groupby",
-            //     groups: otu_ids[0].slice(0,10)
-            // }]
+            text: topStringOTUIDS + sliced_top10_otu_labels
+
         }
 
         var data = [trace1];
-        var layout = {title: "Top 10 OTU IDs for Subject: ",
+        var layout = {title: "Top 10 OTU IDs ",
                         xAxis: {title: "OTU ID"},
                         yAxis: {title: "Sample Value"}
                     };
@@ -52,20 +52,25 @@
     });
 };
     init()
+//////////////////////////////////////////////////////////////////////
+// END OF INIT() GRAPH
+/////////////////////////////////////////////////////////////////////
 
+
+// Create Dropdown function
 function dropDownMenu() {
     // Prevent the page from refreshing
     d3.event.preventDefault();
-    // Select the input value from the form
-    // var dropDown = d3.select("#selDataset");
-    // var dataset = dropDown.property("value");
 
+
+    // Create Listener
     var test_subject = d3.select("#selDataset").on("change", updatePlotly)
     
     // Build the plot with the new user ID
     updatePlotly(test_subject);
 }
 
+// Update the ID List
 function updateIDList(subjectIDs) {
     d3.select("#selDataset").selectAll("option").remove();  //remove existing option
     d3.select('#ID').append("option").text("empty");        
@@ -75,16 +80,26 @@ function updateIDList(subjectIDs) {
     })
 }
 
+// Clear Module Data
+function clearModule(){
+    d3.select("#sample-metadata").selectAll("div").text("");    
+}
+
+
+
+// Fetch Data
 function optionChanged(input){
-    // remove initialized graph
-    // d3.select("#bar").remove()
     
+    clearModule();
+
     // run promise
     d3.json("samples.json").then((data) => {
         var samples = data.samples;
         
         // for demographics, go to data.metadata
-
+        // console.log(data.metadata)
+        
+        
         // Filter the data for the object with the desired sample number
         var resultArray = samples.filter(sampleObj => sampleObj.id == input);
 
@@ -100,25 +115,44 @@ function optionChanged(input){
         var top10_otu_labels = otu_labels[0].sort((a,b) => b-a);
 
 
+        // Filter metadata for the demographic info
+        var demoArray = data.metadata.filter(demoSampleObj => demoSampleObj.id == input);
+
+        // Map the demographic data
+        var id = demoArray.map(row => row.id);
+        var age = demoArray.map(row => row.age);
+        var bbtype = demoArray.map(row => row.bbtype);
+        var ethnicity = demoArray.map(row => row.ethnicity);
+        var gender = demoArray.map(row => row.gender);
+        var location = demoArray.map(row => row.location);
+        var wfreq = demoArray.map(row => row.wfreq);
+
+        // Update demographic module
+        var module = d3.select("#sample-metadata")
+        var row = module.append("div");
+        row.append("div").text( `ID: ${id}`).toString();
+        row.append("div").text( `Age: ${age}`).toString();
+        row.append("div").text( `Belly button type: ${bbtype}`).toString();
+        row.append("div").text( `Ethnicity: ${ethnicity}`).toString();
+        row.append("div").text( `Gender: ${gender}`).toString();
+        row.append("div").text( `Location: ${location}`).toString();
+        row.append("div").text( `WFreq: ${wfreq}`).toString();
+        // row.html("")
+
         //Create the trace
         var otuString = "OTU ";
         var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
             return otuString.concat(item.toString());
         });
-        console.log(topStringOTUIDS)
+        
         var trace1 = {
             type: "bar",
             orientation: "h",
             name: "placeholder",
-            // x: topStringOTUIDS,      //top10_otu_IDs.slice(0,10),
-            // y: top10_vals.slice(0,10),
             x: top10_vals.slice(0,10),
             y: topStringOTUIDS,
-            text: topStringOTUIDS
-            // transforms:[{
-            //     type: "groupby",
-            //     groups: otu_ids[0].slice(0,10)
-            // }]
+            text: topStringOTUIDS + sliced_top10_otu_labels
+
     
             
         }
@@ -127,7 +161,7 @@ function optionChanged(input){
  
 
     var data = [trace1];
-    var layout = {title: "Top 10 OTU IDs for Subject: ",
+    var layout = {title: "Top 10 OTU IDs",
                     xAxis: {title: "OTU ID"},
                     yAxis: {title: "Sample Value"}
                 };
@@ -136,64 +170,3 @@ function optionChanged(input){
         })
 };
 
-// d3.json("samples.json").then(function(data){
-
-//     var user_id = data.samples.map(row => row.id);
-//     var sample_values = data.samples.map(row => row.sample_values);
-//     var otu_ids = data.samples.map(row => row.otu_ids);
-//     var otu_labels = data.samples.map(row => row.otu_labels);
-   
-
-//     // Call update ID list function
-//     updateIDList(user_id)
-    
-//     // Get top 10 Sample Values and OTU IDs
-//     var top10_vals = sample_values[0].sort((a,b) => b-a);
-//     var top10_otu_IDs = otu_ids[0].sort((a,b) => b-a);
-//     var top10_otu_labels = otu_labels[0].sort((a,b) => b-a);
-
-
-// //Create the trace
-//     var otuString = "OTU ";
-//     var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
-//         return otuString.concat(item.toString());
-//     });
-//     console.log(topStringOTUIDS)
-//     var trace1 = {
-//         type: "bar",
-//         orientation: "h",
-//         name: "placeholder",
-//         // x: topStringOTUIDS,      //top10_otu_IDs.slice(0,10),
-//         // y: top10_vals.slice(0,10),
-//         x: top10_vals.slice(0,10),
-//         y: topStringOTUIDS,
-//         text: topStringOTUIDS
-//         // transforms:[{
-//         //     type: "groupby",
-//         //     groups: otu_ids[0].slice(0,10)
-//         // }]
-//     }
-
-        
- 
-
-//     var data = [trace1];
-//     var layout = {title: "Top 10 OTU IDs for Subject: ",
-//                     xAxis: {title: "OTU ID"},
-//                     yAxis: {title: "Sample Value"}
-//                 };
-    
-
-
-//    // restyle new x and y here
-//    Plotly.newPlot("bar", data, layout)
- 
-// });
-   
-
-
-
-
-
-// var names = samples.names
-// console.log(names)
