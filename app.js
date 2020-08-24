@@ -66,14 +66,21 @@ function dropDownMenu() {
     d3.event.preventDefault();
 
 
-    // Create Listener
-    var test_subject = d3.select("#selDataset").on("change", updatePlotly)
+    // // Create Listener
+    // var test_subject = d3.select("#selDataset").on("change", updatePlotly)
+    
+    // // Build the plot with the new user ID
+    // updatePlotly(test_subject);
+
+    // var test_subject = d3.select("#selDataset").on("change", updatePlotly)
     
     // Build the plot with the new user ID
-    updatePlotly(test_subject);
+    // updatePlotly(test_subject);
+
+
 }
 
-// Update the ID List
+// Create the ID List
 function updateIDList(subjectIDs) {
     d3.select("#selDataset").selectAll("option").remove();  //remove existing option
     d3.select('#ID').append("option").text("empty");        
@@ -88,12 +95,18 @@ function clearModule(){
     d3.select("#sample-metadata").selectAll("div").text("");    
 }
 
+function clearBubble(){
+    d3.select("#bubble").selectAll("#svg").remove();    
+}
+
 
 
 // Fetch Data
 function optionChanged(input){
+// function updatePlotly(input){
     
     clearModule();
+    clearBubble();
 
     // run promise
     d3.json("samples.json").then((data) => {
@@ -159,29 +172,45 @@ function optionChanged(input){
                         xAxis: {title: "OTU ID"},
                         yAxis: {title: "Sample Value"}
                     };
- 
-        // Create the bubble trace
+        
+        // Unpack x/y data for bubble trace
+        x1 = [];
+        y1 = [];
+        bubbleText = [];
+
+        otu_ids.forEach((row) => {
+            x1 = (row)
+        });
+       
+        sample_values.forEach((row) => {
+            y1 = (row)
+        });
+       
+        otu_labels.forEach((row) => {
+            bubbleText = (row)
+        });
+            // Create the bubble trace
         var trace2 = {
-            x: otu_ids,
-            y: sample_values,
+            x: x1,
+            y: y1,
+            text: bubbleText,
             mode: "markers",
             marker: {
-                size: sample_values
+                size: y1,
+                color: x1
             }
         }
-        console.log(otu_ids)
-        console.log(sample_values)
-       
+
+
         var data2 = [trace2];
-        var layout2 = {title: "All",
+        var layout2 = {title: "All Samples",
                         showlegend: false,
                         height: 600,
                         width: 600,
                         // yAxis: {title: "Sample Value"}
                     };
-          
+         
     Plotly.newPlot("bar", data, layout)
     Plotly.newPlot("bubble", data2, layout2)
         })
 };
-
