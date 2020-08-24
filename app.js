@@ -109,7 +109,7 @@ function optionChanged(input){
         var otu_ids = resultArray.map(row => row.otu_ids);
         var otu_labels = resultArray.map(row => row.otu_labels);
         
-        // Get Sample Values and OTU IDs
+        // Order the arrays to Get Sample Values and OTU IDs
         var top10_vals = sample_values[0].sort((a,b) => b-a);
         var top10_otu_IDs = otu_ids[0].sort((a,b) => b-a);
         var top10_otu_labels = otu_labels[0].sort((a,b) => b-a);
@@ -139,7 +139,7 @@ function optionChanged(input){
         row.append("div").text( `WFreq: ${wfreq}`).toString();
 
         
-        //Create the trace
+        //Create the bar trace
         var otuString = "OTU ";
         var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
             return otuString.concat(item.toString());
@@ -154,13 +154,34 @@ function optionChanged(input){
             text: topStringOTUIDS + sliced_top10_otu_labels
         }
 
-    var data = [trace1];
-    var layout = {title: "Top 10 OTU IDs",
-                    xAxis: {title: "OTU ID"},
-                    yAxis: {title: "Sample Value"}
-                };
-    
+        var data = [trace1];
+        var layout = {title: "Top 10 OTU IDs",
+                        xAxis: {title: "OTU ID"},
+                        yAxis: {title: "Sample Value"}
+                    };
+ 
+        // Create the bubble trace
+        var trace2 = {
+            type: "bubble",
+            name: "placeholder",
+            x: otu_ids,
+            y: sample_values,
+            mode: "markers",
+            marker: {
+                size: sample_values
+            }
+        }
+        console.log(otu_ids)
+        console.log(sample_values)
+       
+        var data2 = [trace2];
+        var layout2 = {title: "Top 10 OTU IDs"//,
+                        // xAxis: {title: "OTU ID"},
+                        // yAxis: {title: "Sample Value"}
+                    };
+          
     Plotly.newPlot("bar", data, layout)
+    Plotly.newPlot("bubble", data2, layout2)
         })
 };
 
