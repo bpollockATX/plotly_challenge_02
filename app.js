@@ -24,7 +24,7 @@
 
 
 
-    //Create the trace
+        //Create the trace
         var otuString = "OTU ";
         var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
             return otuString.concat(item.toString());
@@ -46,12 +46,15 @@
                         yAxis: {title: "Sample Value"}
                     };
 
-    // restyle new x and y here
+    // Plot init
     Plotly.newPlot("bar", data, layout)
     
     });
 };
-    init()
+
+// Call init
+init()
+
 //////////////////////////////////////////////////////////////////////
 // END OF INIT() GRAPH
 /////////////////////////////////////////////////////////////////////
@@ -95,10 +98,7 @@ function optionChanged(input){
     // run promise
     d3.json("samples.json").then((data) => {
         var samples = data.samples;
-        
-        // for demographics, go to data.metadata
-        // console.log(data.metadata)
-        
+            
         
         // Filter the data for the object with the desired sample number
         var resultArray = samples.filter(sampleObj => sampleObj.id == input);
@@ -109,7 +109,7 @@ function optionChanged(input){
         var otu_ids = resultArray.map(row => row.otu_ids);
         var otu_labels = resultArray.map(row => row.otu_labels);
         
-        // Get top 10 Sample Values and OTU IDs
+        // Get Sample Values and OTU IDs
         var top10_vals = sample_values[0].sort((a,b) => b-a);
         var top10_otu_IDs = otu_ids[0].sort((a,b) => b-a);
         var top10_otu_labels = otu_labels[0].sort((a,b) => b-a);
@@ -137,8 +137,8 @@ function optionChanged(input){
         row.append("div").text( `Gender: ${gender}`).toString();
         row.append("div").text( `Location: ${location}`).toString();
         row.append("div").text( `WFreq: ${wfreq}`).toString();
-        // row.html("")
 
+        
         //Create the trace
         var otuString = "OTU ";
         var topStringOTUIDS = top10_otu_IDs.slice(0,10).map(function (item) {
@@ -152,13 +152,7 @@ function optionChanged(input){
             x: top10_vals.slice(0,10),
             y: topStringOTUIDS,
             text: topStringOTUIDS + sliced_top10_otu_labels
-
-    
-            
         }
-
-        
- 
 
     var data = [trace1];
     var layout = {title: "Top 10 OTU IDs",
