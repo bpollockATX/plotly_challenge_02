@@ -162,10 +162,8 @@ function optionChanged(input){
  
         // Create the bubble trace
         var trace2 = {
-            // type: "bubble",
             x: otu_ids,
             y: sample_values,
-            // name: "placeholder",
             mode: "markers",
             marker: {
                 size: sample_values
@@ -175,7 +173,7 @@ function optionChanged(input){
         console.log(sample_values)
        
         var data2 = [trace2];
-        var layout2 = {title: "Top 10 OTU IDs",
+        var layout2 = {title: "All",
                         showlegend: false,
                         height: 600,
                         width: 600,
