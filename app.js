@@ -188,8 +188,10 @@ function optionChanged(input){
        
         otu_labels.forEach((row) => {
             bubbleText = (row)
+            
         });
-            // Create the bubble trace
+  
+        // Create the bubble trace
         var trace2 = {
             x: x1,
             y: y1,
@@ -197,16 +199,16 @@ function optionChanged(input){
             mode: "markers",
             marker: {
                 size: y1,
-                color: x1
-            }
+                color: y1   //NOTE: Switched this to the sample values param b/c the 
+            }               //color gradient makes the graph more informative.
         }
-
+        console.log(x1)
 
         var data2 = [trace2];
         var layout2 = {title: "All Samples",
                         showlegend: false,
                         height: 600,
-                        width: 600,
+                        width: 1200,
                         // yAxis: {title: "Sample Value"}
                     };
          
